@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StarterAPI.Entities;
+using StarterAPI.Interfaces;
 
 namespace StarterAPI.Controllers
 {
@@ -7,16 +9,31 @@ namespace StarterAPI.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult GetStudents()
+        private readonly IApplicationDbContext _context;
+
+        public StudentController(IApplicationDbContext applicationDbContext)
         {
-            throw new NotImplementedException();
+            _context = applicationDbContext;
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetStudents()
+        {
+            return Ok(_context.Students.ToList());
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetStudent(int id)
+        public async Task<IActionResult> GetStudent(int id)
         {
-            throw new NotImplementedException();
+            var student = await _context.Students.FindAsync(new object[] {id});
+
+            if (student == null)
+            {
+                return BadRequest(new { error = "Student not found." });
+            }
+
+            return Ok(student);
         }
 
         [HttpPost]
