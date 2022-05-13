@@ -17,7 +17,7 @@ namespace StarterAPI.Migrations
                 defaultValue: "");
 
             migrationBuilder.AddColumn<DateTime>(
-                name: "Birthdate",
+                name: "BirthDate",
                 table: "Students",
                 type: "TEXT",
                 nullable: false,
@@ -52,7 +52,7 @@ namespace StarterAPI.Migrations
                 table: "Students");
 
             migrationBuilder.DropColumn(
-                name: "Birthdate",
+                name: "BirthDate",
                 table: "Students");
 
             migrationBuilder.DropColumn(

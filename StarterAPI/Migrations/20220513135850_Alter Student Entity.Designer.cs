@@ -11,7 +11,7 @@ using StarterAPI.Persistence;
 namespace StarterAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220513025704_Alter Student Entity")]
+    [Migration("20220513135850_Alter Student Entity")]
     partial class AlterStudentEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,7 +29,7 @@ namespace StarterAPI.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Birthdate")
+                    b.Property<DateTime>("BirthDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ContactNo")

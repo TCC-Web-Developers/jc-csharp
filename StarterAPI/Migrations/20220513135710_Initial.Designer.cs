@@ -11,7 +11,7 @@ using StarterAPI.Persistence;
 namespace StarterAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220513022812_Initial")]
+    [Migration("20220513135710_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

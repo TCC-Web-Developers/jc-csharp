@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => 
-    options.UseSqlite("Data Source=../student.db")
+    options.UseSqlite("Data Source=./student.db")
     );
 
 //Dependency Injection - Singleton, Scoped, Transient

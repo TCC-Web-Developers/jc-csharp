@@ -27,7 +27,7 @@ namespace StarterAPI.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("Birthdate")
+                    b.Property<DateTime>("BirthDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("ContactNo")

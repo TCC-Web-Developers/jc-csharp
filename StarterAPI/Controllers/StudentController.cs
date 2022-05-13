@@ -49,7 +49,7 @@ namespace StarterAPI.Controllers
                     FirstName = param.FirstName,
                     LastName = param.LastName,
                     EmailAddress = param.EmailAddress,
-                    Birthdate = param.Birthdate,
+                    BirthDate = param.BirthDate,
                     DateEnrolled = param.DateEnrolled,
                 };
 
@@ -58,7 +58,7 @@ namespace StarterAPI.Controllers
                 await _context.SaveChangesAsync(ct);
 
                 string generatedStudentNo
-                    = Convert.ToDateTime(param.DateEnrolled).ToString("yyyMMdd") + "-" + newStudent.StudentId;
+                    = Convert.ToDateTime(param.DateEnrolled).ToString("yyyddMM") + "-" + newStudent.StudentId;
 
                 newStudent.StudentNo = generatedStudentNo;
 
@@ -75,5 +75,38 @@ namespace StarterAPI.Controllers
             throw new NotImplementedException();
 
         }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateStudent(Student param, CancellationToken ct = default)
+        {
+            
+            try
+            {
+                var student = await _context.Students.FindAsync(new object[] { param.StudentId });
+                if (student == null)
+                {
+                    return BadRequest(new { error = "Student not found." });
+                }
+
+                student.FirstName = param.FirstName;
+                student.LastName = param.LastName;
+                student.EmailAddress = param.EmailAddress;
+                student.BirthDate = param.BirthDate;
+                student.DateEnrolled = param.DateEnrolled;
+
+                await _context.SaveChangesAsync(ct);
+
+                return Ok(student);
+
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { error = "Student not found.", exception = exception });
+            }
+
+            throw new NotImplementedException();
+
+        }
+
     }
 }
