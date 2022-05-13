@@ -16,17 +16,18 @@ namespace StarterAPI.Controllers
             _context = applicationDbContext;
         }
 
-
+        //GET ALL
         [HttpGet]
-        public async Task<IActionResult> GetStudents()
+        public IActionResult GetStudents()
         {
             return Ok(_context.Students.ToList());
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetStudent(int id)
+        //GET ONE
+        [HttpGet("{studentId}")]
+        public async Task<IActionResult> GetStudent(int studentId)
         {
-            var student = await _context.Students.FindAsync(new object[] {id});
+            var student = await _context.Students.FindAsync(new object[] { studentId });
 
             if (student == null)
             {
@@ -36,16 +37,43 @@ namespace StarterAPI.Controllers
             return Ok(student);
         }
 
+        //POST
         [HttpPost]
-        public IActionResult CreateStudent()
+        public async Task<IActionResult> CreateStudent(Student param, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
-        }
 
-        [HttpDelete]
-        public IActionResult DeleteStudent()
-        {
+            try
+            {
+                var newStudent = new Student
+                {
+                    FirstName = param.FirstName,
+                    LastName = param.LastName,
+                    EmailAddress = param.EmailAddress,
+                    Birthdate = param.Birthdate,
+                    DateEnrolled = param.DateEnrolled,
+                };
+
+                _context.Students.Add(newStudent);
+
+                await _context.SaveChangesAsync(ct);
+
+                string generatedStudentNo
+                    = Convert.ToDateTime(param.DateEnrolled).ToString("yyyMMdd") + "-" + newStudent.StudentId;
+
+                newStudent.StudentNo = generatedStudentNo;
+
+                await _context.SaveChangesAsync(ct);
+
+                return Ok(newStudent);
+
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { error = "Student not found.", exception = exception });
+            }
+
             throw new NotImplementedException();
+
         }
     }
 }

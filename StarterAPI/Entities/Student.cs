@@ -8,7 +8,6 @@
         public string StudentNo { get; set; } = string.Empty;
         public string EmailAddress { get; set; } = string.Empty;
         public DateTime? DateEnrolled { get; set; }
-
         public DateTime Birthdate { get; set; }
         public string Course { get; set; } = string.Empty;
         public string Profile { get; set; } = string.Empty;
