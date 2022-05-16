@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using StarterAPI.Interfaces;
 using StarterAPI.Persistence;
+using StarterAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,8 @@ builder.Services.AddTransient<IApplicationDbContext>(
     provider => 
     provider.GetRequiredService<ApplicationDbContext>()
     );
+
+builder.Services.AddTransient<IStudentService, StudentService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

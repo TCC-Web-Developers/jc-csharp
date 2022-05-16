@@ -9,25 +9,26 @@ namespace StarterAPI.Controllers
     [ApiController]
     public class StudentController : ControllerBase
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IStudentService _service;
 
-        public StudentController(IApplicationDbContext applicationDbContext)
+        public StudentController(IStudentService service)
         {
-            _context = applicationDbContext;
+            _service = service;  
         }
 
         //GET ALL
         [HttpGet]
         public IActionResult GetStudents()
         {
-            return Ok(_context.Students.ToList());
+            var students = _service.GetStudents();   
+            return Ok(students);
         }
 
         //GET ONE
         [HttpGet("{studentId}")]
         public async Task<IActionResult> GetStudent(int studentId)
         {
-            var student = await _context.Students.FindAsync(new object[] { studentId });
+            var student = await _service.GetStudent(studentId);
 
             if (student == null)
             {
@@ -41,70 +42,47 @@ namespace StarterAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateStudent(Student param, CancellationToken ct = default)
         {
-
             try
             {
-                var newStudent = new Student
-                {
-                    FirstName = param.FirstName,
-                    LastName = param.LastName,
-                    EmailAddress = param.EmailAddress,
-                    BirthDate = param.BirthDate,
-                    DateEnrolled = param.DateEnrolled,
-                };
-
-                _context.Students.Add(newStudent);
-
-                await _context.SaveChangesAsync(ct);
-
-                string generatedStudentNo
-                    = Convert.ToDateTime(param.DateEnrolled).ToString("yyyddMM") + "-" + newStudent.StudentId;
-
-                newStudent.StudentNo = generatedStudentNo;
-
-                await _context.SaveChangesAsync(ct);
-
-                return Ok(newStudent);
-
+                return Ok(await _service.CreateStudent(param, ct));
             }
             catch (Exception exception)
             {
-                return BadRequest(new { error = "Student not found.", exception = exception });
+                return BadRequest(new { error = "Student not found." , exception });
             }
-
-            throw new NotImplementedException();
-
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateStudent(Student param, CancellationToken ct = default)
         {
-            
+ 
             try
             {
-                var student = await _context.Students.FindAsync(new object[] { param.StudentId });
-                if (student == null)
-                {
-                    return BadRequest(new { error = "Student not found." });
-                }
+                await _service.UpdateStudent(param, ct);
 
-                student.FirstName = param.FirstName;
-                student.LastName = param.LastName;
-                student.EmailAddress = param.EmailAddress;
-                student.BirthDate = param.BirthDate;
-                student.DateEnrolled = param.DateEnrolled;
-
-                await _context.SaveChangesAsync(ct);
-
-                return Ok(student);
+                return Ok(_service.GetStudents());
 
             }
             catch (Exception exception)
             {
-                return BadRequest(new { error = "Student not found.", exception = exception });
+                return BadRequest(new { error = "Student not found." , exception });
             }
 
-            throw new NotImplementedException();
+        }
+
+        [HttpDelete("delete/{studentId}")]
+        public async Task<IActionResult> DeleteStudent(int studentId, CancellationToken ct = default)
+        {
+            try
+            {
+                await _service.DeleteStudent(studentId, ct); 
+                return Ok(_service.GetStudents());
+
+            }
+            catch (Exception exception)
+            {
+                return BadRequest(new { error = "Student not found." , exception });
+            }
 
         }
 
