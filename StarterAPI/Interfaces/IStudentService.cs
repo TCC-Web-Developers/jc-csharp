@@ -7,7 +7,7 @@ namespace StarterAPI.Interfaces
         IEnumerable<Student> GetStudents();
         Task<Student> GetStudent(int id);
         Task<Student> CreateStudent(Student student, CancellationToken ct);
-        Task UpdateStudent(Student student, CancellationToken ct);
-        Task DeleteStudent(int id, CancellationToken ct); 
+        Task<Student> UpdateStudent(Student student, CancellationToken ct);
+        Task<bool> DeleteStudent(int id, CancellationToken ct); 
     }
 }

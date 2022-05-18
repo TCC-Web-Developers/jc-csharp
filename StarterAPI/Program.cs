@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using StarterAPI.Interfaces;
+using StarterAPI.Middleware;
 using StarterAPI.Persistence;
 using StarterAPI.Services;
 
@@ -13,17 +14,19 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     );
 
 //Dependency Injection - Singleton, Scoped, Transient
-builder.Services.AddTransient<IApplicationDbContext>(
+builder.Services.AddScoped<IApplicationDbContext>(
     provider => 
     provider.GetRequiredService<ApplicationDbContext>()
     );
 
-builder.Services.AddTransient<IStudentService, StudentService>();
-
+builder.Services.AddCors();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+//DI for app services
+builder.Services.AddTransient<IStudentService, StudentService>();
 
 var app = builder.Build();
 
@@ -37,6 +40,14 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors(x => x
+   .AllowAnyOrigin()
+   .AllowAnyMethod()
+   .AllowAnyHeader());
+
+// global error handler
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.MapControllers();
 

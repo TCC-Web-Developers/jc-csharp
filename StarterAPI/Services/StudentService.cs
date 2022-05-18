@@ -21,18 +21,27 @@ namespace StarterAPI.Services
         {
             var student = await _context.Students.FindAsync(new object[] { id });
 
+            if (student == null)
+            {
+                throw new KeyNotFoundException("Student not found");
+            }
+
             return student;
         }
 
-        public async Task<Student> CreateStudent(Student student, CancellationToken ct)
+        public async Task<Student> CreateStudent(Student request, CancellationToken ct)
         {
             var newStudent = new Student
             {
-                FirstName = student.FirstName,
-                LastName = student.LastName,
-                EmailAddress = student.EmailAddress,
-                BirthDate = student.BirthDate,
-                DateEnrolled = student.DateEnrolled,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                EmailAddress = request.EmailAddress,
+                BirthDate = request.BirthDate,
+                DateEnrolled = request.DateEnrolled,
+                Address = request.Address,
+                Course = request.Course,
+                ContactNo = request.ContactNo,
+                Profile = request.Profile,
             };
 
             _context.Students.Add(newStudent);
@@ -40,7 +49,7 @@ namespace StarterAPI.Services
             await _context.SaveChangesAsync(ct);
 
             string generatedStudentNo
-                = Convert.ToDateTime(student.DateEnrolled).ToString("yyyddMM") + "-" + newStudent.StudentId;
+                = Convert.ToDateTime(request.DateEnrolled).ToString("yyyddMM") + "-" + newStudent.StudentId;
 
             newStudent.StudentNo = generatedStudentNo;
 
@@ -49,19 +58,43 @@ namespace StarterAPI.Services
             return newStudent;
         }
 
-        public async Task UpdateStudent(Student student, CancellationToken ct)
+        public async Task<Student> UpdateStudent(Student request, CancellationToken ct)
         {
-            _context.Students.Update(student);
+            var student = await _context.Students.FindAsync(new object[] { request.StudentId });
+
+            if (student == null)
+            {
+                throw new KeyNotFoundException("Student not found");
+            }
+
+            student.FirstName = request.FirstName;
+            student.LastName = request.LastName;
+            student.Address = request.Address;
+            student.EmailAddress = request.EmailAddress;
+            student.BirthDate = request.BirthDate;
+            student.Course = request.Course;
+            student.ContactNo = request.ContactNo;
+            student.Profile = request.Profile;
+
             await _context.SaveChangesAsync(ct);
+
+            return student;
         }
 
-        public async Task DeleteStudent(int id, CancellationToken ct)
+        public async Task<bool> DeleteStudent(int id, CancellationToken ct)
         {
-            var student = await _context.Students.FindAsync(new object[] { id }, ct);
+            var student = await _context.Students.FindAsync(new object[] { id });
+
+            if (student == null)
+            {
+                throw new KeyNotFoundException("Student not found");
+            }
 
             _context.Students.Remove(student);
 
             await _context.SaveChangesAsync(ct);
+
+            return true;
         }
     }
 }

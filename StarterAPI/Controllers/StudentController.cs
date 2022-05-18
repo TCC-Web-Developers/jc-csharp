@@ -17,7 +17,7 @@ namespace StarterAPI.Controllers
         }
 
         //GET ALL
-        [HttpGet]
+        [HttpGet()]
         public IActionResult GetStudents()
         {
             var students = _service.GetStudents();   
@@ -25,65 +25,36 @@ namespace StarterAPI.Controllers
         }
 
         //GET ONE
-        [HttpGet("{studentId}")]
+        [HttpGet("profile/{studentId}")]
         public async Task<IActionResult> GetStudent(int studentId)
         {
             var student = await _service.GetStudent(studentId);
 
-            if (student == null)
-            {
-                return BadRequest(new { error = "Student not found." });
-            }
-
-            return Ok(student);
+            return Ok(new { data = student });
         }
 
         //POST
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateStudent(Student param, CancellationToken ct = default)
         {
-            try
-            {
-                return Ok(await _service.CreateStudent(param, ct));
-            }
-            catch (Exception exception)
-            {
-                return BadRequest(new { error = "Student not found." , exception });
-            }
+            var newStudent = await _service.CreateStudent(param, ct);   
+            return Ok(new { data = newStudent });
         }
 
-        [HttpPut]
+        [HttpPut("update")]
         public async Task<IActionResult> UpdateStudent(Student param, CancellationToken ct = default)
         {
  
-            try
-            {
-                await _service.UpdateStudent(param, ct);
-
-                return Ok(_service.GetStudents());
-
-            }
-            catch (Exception exception)
-            {
-                return BadRequest(new { error = "Student not found." , exception });
-            }
+           var updatedStudent = await _service.UpdateStudent(param, ct);  
+           return Ok(new { data = updatedStudent});
 
         }
 
         [HttpDelete("delete/{studentId}")]
         public async Task<IActionResult> DeleteStudent(int studentId, CancellationToken ct = default)
         {
-            try
-            {
-                await _service.DeleteStudent(studentId, ct); 
-                return Ok(_service.GetStudents());
-
-            }
-            catch (Exception exception)
-            {
-                return BadRequest(new { error = "Student not found." , exception });
-            }
-
+           var isDeleted = await _service.DeleteStudent(studentId, ct);
+            return Ok(new { data = isDeleted });
         }
 
     }
