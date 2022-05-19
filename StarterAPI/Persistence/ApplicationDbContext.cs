@@ -10,5 +10,6 @@ namespace StarterAPI.Persistence
         : base(options) { }
 
         public DbSet<Student> Students => Set<Student>();
+        public DbSet<Class> Classes => Set<Class>();
     }
 }

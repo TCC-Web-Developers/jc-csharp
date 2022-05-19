@@ -27,6 +27,7 @@ builder.Services.AddSwaggerGen();
 
 //DI for app services
 builder.Services.AddTransient<IStudentService, StudentService>();
+builder.Services.AddTransient<IClassService, ClassService>();
 
 var app = builder.Build();
 
